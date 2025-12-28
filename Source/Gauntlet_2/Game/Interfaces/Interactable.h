@@ -12,20 +12,21 @@ class UInteractable : public UInterface
 
 class GAUNTLET_2_API IInteractable
 {
-	GENERATED_BODY()
-	
+	GENERATED_BODY()	
+
 public:
+	//Can Interact Implementation
+	virtual bool NativeCanInteract(AActor* contextActor) = 0;
 
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	bool BP_CanInteract();
-
-	virtual bool NativeCanInteract() = 0;
-
-	bool CanInteract() { return NativeCanInteract(); };
+	//Return true if the Interface can be interacted
+	bool CanInteract(AActor* contextActor) { return NativeCanInteract(contextActor); };
 
 	/* Function that gets called when Interact gets called via C++ */
 	UFUNCTION(BlueprintImplementableEvent)
 	void BP_OnInteract(AActor* contextActor);
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	bool BP_CanInteract();
 
 	/* Default c++ implementation */
 	virtual void NativeInteract(AActor* contextActor) = 0;

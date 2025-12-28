@@ -7,7 +7,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSwitchCallback);
 
 // This class does not need to be modified.
-UINTERFACE(MinimalAPI)
+UINTERFACE(BlueprintType)
 class USwitchable : public UInterface
 {
 	GENERATED_BODY()
@@ -37,7 +37,7 @@ protected:
 	void BP_OnSwitchOFF();
 
 public:	
-	FORCEINLINE bool GetSwitchState() { return bSwitchState; };
+	bool GetSwitchState() { return bSwitchState; };
 	
 	/* Switch Between the ON and OFF implementation */
 	void Switch() { NativeSwitch(); };
