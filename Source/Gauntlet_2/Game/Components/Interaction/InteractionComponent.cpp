@@ -34,11 +34,9 @@ void UInteractionComponent::Interact()
 	IInteractable* interactable = ClosestInteractable.GetInterface();
 	//Blueprint implemented -> Interact
 	if (interactable == nullptr)
-	{
 		interactable = Cast<IInteractable>(actorToInteract);
-		IInteractable::Execute_BP_OnInteract(actorToInteract, GetOwner());
-		return;
-	}
+	
+	Interact(interactable);
 }
 
 void UInteractionComponent::Interact(IInteractable* interactable)

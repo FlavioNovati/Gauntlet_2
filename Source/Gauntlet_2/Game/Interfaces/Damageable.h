@@ -23,7 +23,6 @@ protected:
 	virtual void NativeDamage(float amount) = 0;
 
 public:
-
 	/* C++ side damage function */
 	void Damage(float amount) { NativeDamage(amount); };
 };
