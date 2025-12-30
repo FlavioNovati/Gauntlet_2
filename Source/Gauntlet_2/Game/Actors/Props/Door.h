@@ -21,8 +21,10 @@ protected:
 	virtual void NativeSwitchON() override;
 	virtual void NativeSwitchOFF() override;
 
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true, Category = "Switchable"))
+	bool bStartOn = true;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
 };

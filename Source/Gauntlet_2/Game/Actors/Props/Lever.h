@@ -12,14 +12,17 @@ UCLASS()
 class GAUNTLET_2_API ALever : public AActor, public IInteractable
 {
 	GENERATED_BODY()
-	
+
 public:	
 	ALever();
+
+private:
+	void SwitchAllTargets();
 
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true, Category = "Interaction"))
 	bool bCanInteract = true;
 
 	/*Array of targets of the lever, 
@@ -32,6 +35,8 @@ protected:
 		ToolTip = "Array of targets of the lever, upon interaction all Target will be Switch On or Off (Target Must Implement ISwitchable)"
 	))
 	TArray<AActor*> LeverTargets;
+
+	TArray< TScriptInterface<ISwitchable>> SwitchableTargets;
 
 public:	
 	// Called every frame

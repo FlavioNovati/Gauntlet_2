@@ -11,7 +11,15 @@ ADoor::ADoor()
 // Called when the game starts or when spawned
 void ADoor::BeginPlay()
 {
+	if (!GetWorld())
+		return;
+
 	Super::BeginPlay();
+
+	if (bStartOn)
+		NativeSwitchON();
+	else
+		NativeSwitchOFF();
 }
 
 // Called every frame
