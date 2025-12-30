@@ -89,6 +89,8 @@ TArray<AActor*> UInteractionComponent::GetOverlappingActors(float deltaTimeConte
 		}
 	}
 
+	overlappingActors.Remove(GetOwner());
+
 	return overlappingActors;
 }
 
