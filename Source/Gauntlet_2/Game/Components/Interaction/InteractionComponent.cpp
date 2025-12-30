@@ -1,4 +1,6 @@
 #include "Game/Components/Interaction/InteractionComponent.h"
+#include "Kismet/KismetMathLibrary.h"
+#include <limits>
 
 // Sets default values for this component's properties
 UInteractionComponent::UInteractionComponent()
@@ -17,7 +19,7 @@ void UInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
 	//Draw Debug
 	if(ShowDebugInfo)
-		DrawDebug(DeltaTime, nearbyActors, NearbyInteractablesActors, ClosestInteractable);
+		DrawDebug(DeltaTime, nearbyActors, NearbyInteractables, ClosestInteractable);
 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
@@ -100,7 +102,7 @@ TScriptInterface<IInteractable> UInteractionComponent::GetClosest(const TArray<T
 		return TScriptInterface<IInteractable>(nullptr);
 
 	//Distance with some clearence
-	float closestDist = InteractionRadius + 5.f;
+	float closestDist = std::numeric_limits<float>::max();
 	AActor* closestActor;
 	FVector location = GetOwner()->GetActorLocation() + InteractionOffset;
 
@@ -164,13 +166,13 @@ bool UInteractionComponent::ImplementsInteractable(AActor* actorToCheck)
 
 #pragma region Debug
 
-void UInteractionComponent::DrawDebug(float drawTime, TArray<AActor*> nearbyActors, TArray<AActor*> nearbyInteractablesActors, TScriptInterface<IInteractable> closestInteractable)
+void UInteractionComponent::DrawDebug(float drawTime, TArray<AActor*> nearbyActors, TArray<TScriptInterface<IInteractable>> nearbyInteractablesActors, TScriptInterface<IInteractable> closestInteractable)
 {
 	//Draw nearby Actors
-	HighlightActorDebug(drawTime, nearbyActors, NearbyActorsDebugData);
+	HighlightActorsDebug(drawTime, nearbyActors, NearbyActorsDebugData);
 
 	//Draw nearby Interactables
-	HighlightActorDebug(drawTime, nearbyInteractablesActors, NearbyInteractablesDebugData);
+	HighlightActorsDebug(drawTime, FromTPointerToActor(nearbyInteractablesActors), NearbyInteractablesDebugData);
 	
 	//Draw closest Interactable
 	HighlightActorDebug(drawTime, Cast<AActor>(closestInteractable.GetObject()), ClosestInteractableDebugData);
@@ -179,7 +181,7 @@ void UInteractionComponent::DrawDebug(float drawTime, TArray<AActor*> nearbyActo
 	DrawDebugSphere(GetWorld(), GetOwner()->GetActorLocation() + InteractionOffset, InteractionRadius, 15, InteractionDebugColor, false);
 }
 
-void UInteractionComponent::HighlightActorDebug(float drawTime, TArray<AActor*> actorsToHighlight, FInteractionDebugData debugData)
+void UInteractionComponent::HighlightActorsDebug(float drawTime, TArray<AActor*> actorsToHighlight, FInteractionDebugData debugData)
 {
 	for (AActor* nearbyActor : actorsToHighlight)
 		HighlightActorDebug(drawTime, nearbyActor, debugData);
@@ -199,12 +201,18 @@ void UInteractionComponent::HighlightActorDebug(float drawTime, AActor* actorToH
 		DrawDebugLine(world, GetOwner()->GetActorLocation() + InteractionOffset, targetActorLocation, debugData.DebugColor, false);
 }
 
+TArray<AActor*> UInteractionComponent::FromTPointerToActor(TArray<TScriptInterface<IInteractable>> pointerArray)
+{
+	//NOTE:: This is a workaround since it wont let me creare a overload with fro the TArray<TScriptInterface<IInteractable>>*
+
+	TArray<AActor*> array = TArray<AActor*>();
+
+	for (int i = 0; i < pointerArray.Num(); i++)
+	{
+		array.Add(Cast<AActor>(pointerArray[i].GetObject()));
+	}
+	
+	return array;
+}
+
 #pragma endregion
-
-/*
-if (!tInteractable.GetInterface()->CanInteract(actorToCheck))
-			return false;
-
-tInteractable.GetInterface()->Interact(actorToCheck);
-*/
-

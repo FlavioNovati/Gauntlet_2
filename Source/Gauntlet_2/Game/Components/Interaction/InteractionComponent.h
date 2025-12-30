@@ -52,9 +52,10 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true, Category = "Interaction Debug", EditCondition = "ShowDebugInfo"))
 	FColor InteractionDebugColor = FColor::Purple;
 
-	void DrawDebug(float drawTime, TArray<AActor*> nearbyActors, TArray<AActor*> nearbyInteractablesActors, TScriptInterface<IInteractable> closestInteractable);
-	void HighlightActorDebug(float drawTime, TArray<AActor*> actorsToHighlight, FInteractionDebugData debugData);
+	void DrawDebug(float drawTime, TArray<AActor*> nearbyActors, TArray<TScriptInterface<IInteractable>> nearbyInteractablesActors, TScriptInterface<IInteractable> closestInteractable);
+	void HighlightActorsDebug(float drawTime, TArray<AActor*> actorsToHighlight, FInteractionDebugData debugData);
 	void HighlightActorDebug(float drawTime, AActor* actorToHighlight, FInteractionDebugData debugData);
+	TArray<AActor*> FromTPointerToActor(TArray<TScriptInterface<IInteractable>> pointerArray);
 
 #pragma endregion
 
