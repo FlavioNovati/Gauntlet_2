@@ -47,7 +47,10 @@ protected:
 	FInteractionDebugData NearbyInteractablesDebugData = FInteractionDebugData(15.f, FColor::Emerald, true);
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true, Category = "Interaction Debug", EditCondition = "ShowDebugInfo"))
-	FInteractionDebugData ClosestInteractableDebugData = FInteractionDebugData(15.f, FColor::Green, true);
+	FInteractionDebugData ClosestInteractableDebugData = FInteractionDebugData(15.f, FColor::Yellow, true);
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true, Category = "Interaction Debug", EditCondition = "ShowDebugInfo"))
+	FColor InteractionDebugColor = FColor::Purple;
 
 	void DrawDebug(float drawTime, TArray<AActor*> nearbyActors, TArray<AActor*> nearbyInteractablesActors, TScriptInterface<IInteractable> closestInteractable);
 	void HighlightActorDebug(float drawTime, TArray<AActor*> actorsToHighlight, FInteractionDebugData debugData);
@@ -55,15 +58,17 @@ protected:
 
 #pragma endregion
 
-	virtual void BeginPlay() override;
-
 	TArray<TScriptInterface<IInteractable>> GetInteractablesFromActors(const TArray<AActor*> actors);
 	TArray<AActor*> GetOverlappingActors(float deltaTimeContext);
 	TScriptInterface<IInteractable> GetClosest(const TArray<TScriptInterface<IInteractable>> interactables);
-
 	bool ImplementsInteractable(AActor* actorToCheck);
-	
+
+	void Interact(IInteractable* interactable);
 	
 public:
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;		
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+
+	UFUNCTION(BlueprintCallable, meta = ( Category = "Interaction") )
+	void Interact();
 };

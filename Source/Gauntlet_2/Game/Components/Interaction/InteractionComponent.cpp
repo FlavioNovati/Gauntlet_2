@@ -6,11 +6,6 @@ UInteractionComponent::UInteractionComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UInteractionComponent::BeginPlay()
-{
-	return;
-}
-
 void UInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	//Get Close Actors
@@ -25,6 +20,42 @@ void UInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 		DrawDebug(DeltaTime, nearbyActors, NearbyInteractablesActors, ClosestInteractable);
 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+}
+
+void UInteractionComponent::Interact()
+{
+	//No Interactable nearby
+	if (ClosestInteractable.GetObject() == nullptr)
+		return;
+
+	//Get Actor
+	AActor* actorToInteract = Cast<AActor>(ClosestInteractable.GetObject());
+	//C++ implemented
+	IInteractable* interactable = ClosestInteractable.GetInterface();
+	//Blueprint implemented -> Interact
+	if (interactable == nullptr)
+	{
+		interactable = Cast<IInteractable>(actorToInteract);
+		IInteractable::Execute_BP_OnInteract(actorToInteract, GetOwner());
+		return;
+	}
+}
+
+void UInteractionComponent::Interact(IInteractable* interactable)
+{
+	//Validate Interactable
+	if (interactable == nullptr)
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("- ERROR WHILE INTERACTING -"));
+			return;
+		}
+	}
+
+	//Check if the interactable can be interacted
+	if(interactable->CanInteract(GetOwner()))
+		interactable->Interact(GetOwner());
 }
 
 TArray<AActor*> UInteractionComponent::GetOverlappingActors(float deltaTimeContext)
@@ -121,7 +152,7 @@ bool UInteractionComponent::ImplementsInteractable(AActor* actorToCheck)
 	TScriptInterface<IInteractable> tInteractable = TScriptInterface<IInteractable>(actorToCheck);
 
 	//C++ implemented side interface
-	if (tInteractable.GetInterface())
+	if(tInteractable.GetInterface())
 		return true;
 
 	if (Cast<IInteractable>(actorToCheck))
@@ -143,6 +174,9 @@ void UInteractionComponent::DrawDebug(float drawTime, TArray<AActor*> nearbyActo
 	
 	//Draw closest Interactable
 	HighlightActorDebug(drawTime, Cast<AActor>(closestInteractable.GetObject()), ClosestInteractableDebugData);
+
+	//Draw Interaction sphere
+	DrawDebugSphere(GetWorld(), GetOwner()->GetActorLocation() + InteractionOffset, InteractionRadius, 15, InteractionDebugColor, false);
 }
 
 void UInteractionComponent::HighlightActorDebug(float drawTime, TArray<AActor*> actorsToHighlight, FInteractionDebugData debugData)
