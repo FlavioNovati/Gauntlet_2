@@ -1,6 +1,6 @@
 #include "Game/Interfaces/Switchable.h"
 
-void ISwitchable::NativeSwitch()
+void ISwitchable::NativeSwitch(AActor* contextActor)
 {
 	//Reverse switch state
 	bSwitchState = !bSwitchState;
@@ -11,13 +11,13 @@ void ISwitchable::NativeSwitch()
 		//Call C++ implementation
 		NativeSwitchON();
 		//Call Blueprint implementation
-		BP_OnSwitchON();
+		ISwitchable::Execute_BP_OnSwitchON(contextActor);
 	}
 	else
 	{
 		//Call C++ implementation
 		NativeSwitchOFF();
 		//Call Blueprint implementation
-		BP_OnSwitchOFF();
+		ISwitchable::Execute_BP_OnSwitchOFF(contextActor);
 	}
 }

@@ -22,7 +22,7 @@ private:
 	/* State of the Switchable */
 	bool bSwitchState = false;
 	/* C++ base Switch */
-	void NativeSwitch();
+	void NativeSwitch(AActor* contextActor);
 
 protected:
 	virtual void NativeSwitchON() = 0;
@@ -40,5 +40,5 @@ public:
 	bool GetSwitchState() { return bSwitchState; };
 	
 	/* Switch Between the ON and OFF implementation */
-	void Switch() { NativeSwitch(); };
+	void Switch(AActor* contextActor) { NativeSwitch(contextActor); };
 };

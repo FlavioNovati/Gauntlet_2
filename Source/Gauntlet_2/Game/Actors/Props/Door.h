@@ -9,10 +9,19 @@ UCLASS()
 class GAUNTLET_2_API ADoor : public AActor, public ISwitchable
 {
 	GENERATED_BODY()
-	
+
 public:	
 	// Sets default values for this actor's properties
 	ADoor();
+
+private:
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Meta = (AllowPrivateAccess = true))
+	USceneComponent* Root;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Meta = (AllowPrivateAccess = true))
+	USceneComponent* DoorPivot;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Meta = (AllowPrivateAccess = true))
+	UStaticMeshComponent* DoorBody;
 
 protected:
 	// Called when the game starts or when spawned

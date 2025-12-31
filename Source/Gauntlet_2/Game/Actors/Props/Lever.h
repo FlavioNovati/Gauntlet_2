@@ -19,11 +19,33 @@ public:
 private:
 	void SwitchAllTargets();
 
-protected:
+	//Create Root
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Meta = (AllowPrivateAccess = true))
+	USceneComponent* Root;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Meta = (AllowPrivateAccess = true))
+	UStaticMeshComponent* LeverBody;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Meta = (AllowPrivateAccess = true))
+	USceneComponent* HandlePivot;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Meta = (AllowPrivateAccess = true))
+	UStaticMeshComponent* LeverHandle;
+
+protected:	
 	virtual void BeginPlay() override;
+
+	void InvertLeverState();
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (AllowPrivateAccess = true))
+	void OnLeverOn();
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (AllowPrivateAccess = true))
+	void OnLeverOff();
+
 
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true, Category = "Interaction"))
 	bool bCanInteract = true;
+
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true, Category = "Lever"))
+	bool bLeverState = false;
 
 	/*Array of targets of the lever, 
 	upon interaction all Target will be Switch On or Off
@@ -48,5 +70,4 @@ public:
 
 	void NativeInteract(AActor* contextActor) override;
 #pragma endregion
-
 };

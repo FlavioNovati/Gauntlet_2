@@ -6,6 +6,15 @@ ADoor::ADoor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	//Create Root
+	Root = CreateDefaultSubobject<USceneComponent>("root");
+	RootComponent = Root;
+
+	DoorPivot = CreateDefaultSubobject<USceneComponent>("Door Pivot");
+	DoorPivot->SetupAttachment(Root);
+
+	DoorBody = CreateDefaultSubobject<UStaticMeshComponent>("Body");
+	DoorBody->SetupAttachment(DoorPivot);
 }
 
 // Called when the game starts or when spawned
