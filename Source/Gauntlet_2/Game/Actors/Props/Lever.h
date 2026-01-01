@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Game/Interfaces/Interactable.h"
 #include "Game/Interfaces/Switchable.h"
+#include "Materials/MaterialInterface.h"
 #include "Lever.generated.h"
 
 UCLASS()
@@ -18,8 +19,23 @@ public:
 
 private:
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Meta = (AllowPrivateaccess = true, Category = "Visual"))
+	UMaterialInterface* LeverBodyMaterialParent;
+	UMaterialInstanceDynamic* LeverDynamicMaterial;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Meta = (AllowPrivateaccess = true, Category = "Visual"))
+	FColor OnColor = FColor::Green;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Meta = (AllowPrivateaccess = true, Category = "Visual"))
+	FColor OffColor = FColor::Red;
+
 	UFUNCTION(BlueprintCallable, Meta = (AllowPrivateAccess = true))
 	void SwitchAllTargets();
+
+#if WITH_EDITOR
+	void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent);
+	void OnConstruction(const FTransform& Transform);
+#endif
 
 	//Create Root
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Meta = (AllowPrivateAccess = true))

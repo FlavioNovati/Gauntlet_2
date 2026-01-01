@@ -19,6 +19,19 @@ ALever::ALever()
 
 	LeverHandle = CreateDefaultSubobject<UStaticMeshComponent>("Handle");
 	LeverHandle->SetupAttachment(HandlePivot);
+
+	//Create Dynamic material if missing
+	if (LeverBodyMaterialParent && !LeverDynamicMaterial)
+	{
+		LeverDynamicMaterial = UMaterialInstanceDynamic::Create(LeverBodyMaterialParent, this, FName(TEXT("Base Material Dynamic")));
+
+		//Assign material
+		if (LeverBody)
+			LeverBody->SetMaterial(0, LeverDynamicMaterial);
+
+		//Assign Material Color
+		LeverDynamicMaterial->SetVectorParameterValue("Base Color", OffColor);
+	}
 }
 
 void ALever::BeginPlay()
@@ -43,6 +56,14 @@ void ALever::BeginPlay()
 
 		//Add Unique Switchable
 		SwitchableTargets.AddUnique(switchableTScriptInterface);
+	}
+
+	if (LeverBodyMaterialParent && LeverDynamicMaterial == nullptr)
+	{
+		LeverDynamicMaterial = UMaterialInstanceDynamic::Create(LeverBodyMaterialParent, this, FName(TEXT("Base Material Dynamic")));
+		LeverDynamicMaterial->SetFlags(RF_Transient);
+		LeverDynamicMaterial->SetVectorParameterValue("Base Color", OffColor);
+		LeverBody->SetMaterial(0, LeverDynamicMaterial);
 	}
 
 	Super::BeginPlay();
@@ -71,10 +92,17 @@ void ALever::InvertLeverState()
 	bLeverState = !bLeverState;
 
 	if (bLeverState)
+	{
+		LeverDynamicMaterial->SetVectorParameterValue("Base Color", OnColor);
 		OnLeverOn();
+	}
 	else
+	{
+		LeverDynamicMaterial->SetVectorParameterValue("Base Color", OffColor);
 		OnLeverOff();
+	}
 }
+
 
 #pragma region IInteractable Interface implementation
 
@@ -97,3 +125,73 @@ void ALever::NativeInteract(AActor* contextActor)
 }
 #pragma endregion
 
+#pragma region Editor Side Color Change
+#if WITH_EDITOR 
+void ALever::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+	if (PropertyChangedEvent.Property == NULL)
+		return;
+
+	//Check if the property changed is the material
+	FName propertyName = PropertyChangedEvent.Property ? PropertyChangedEvent.Property->GetFName() : NAME_None; 
+
+	if (propertyName == GET_MEMBER_NAME_CHECKED(ALever, LeverBodyMaterialParent))
+	{
+		//Create Dynamic Material Starting from parent
+		if (LeverBodyMaterialParent)
+		{
+			LeverDynamicMaterial = UMaterialInstanceDynamic::Create(LeverBodyMaterialParent, this, FName(TEXT("Base Material Dynamic")));
+
+			//Assign material
+			if(LeverBody)
+				LeverBody->SetMaterial(0, LeverDynamicMaterial);
+		}
+
+		//Assign Color
+		LeverDynamicMaterial->SetVectorParameterValue("Base Color", OffColor);
+
+		return;
+	}
+	else if (propertyName == GET_MEMBER_NAME_CHECKED(ALever, OffColor))
+	{
+		if (!LeverBodyMaterialParent)
+		{
+			UE_LOG(LogTemp, Error, TEXT("ERROR: Assign LeverBodyMaterialParent first!"));
+			return;
+		}
+
+		//Check if the material was created -> create it
+		if (!LeverDynamicMaterial)
+		{
+			LeverDynamicMaterial = UMaterialInstanceDynamic::Create(LeverBodyMaterialParent, this, FName(TEXT("Base Material Dynamic")));
+
+			//Assign material
+			if (LeverBody)
+				LeverBody->SetMaterial(0, LeverDynamicMaterial);
+		}
+
+		//Update Color
+		LeverDynamicMaterial->SetVectorParameterValue("Base Color", OffColor);
+	}
+}
+
+//Update Material In Scene
+void ALever::OnConstruction(const FTransform& Transform) 
+{
+	Super::OnConstruction(Transform);
+
+	//Create Dynamic Material if Missing
+	if (LeverBodyMaterialParent && !LeverDynamicMaterial)
+	{
+		LeverDynamicMaterial = UMaterialInstanceDynamic::Create(LeverBodyMaterialParent, this);
+		if (LeverBody)
+			LeverBody->SetMaterial(0, LeverDynamicMaterial);
+	}
+
+	//Assign material color
+	LeverDynamicMaterial->SetVectorParameterValue("Base Color", OffColor); 
+}
+#endif
+#pragma endregion
