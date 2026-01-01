@@ -17,6 +17,8 @@ public:
 	ALever();
 
 private:
+
+	UFUNCTION(BlueprintCallable, Meta = (AllowPrivateAccess = true))
 	void SwitchAllTargets();
 
 	//Create Root

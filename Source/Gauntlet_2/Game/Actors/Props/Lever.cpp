@@ -56,6 +56,9 @@ void ALever::Tick(float DeltaTime)
 
 void ALever::SwitchAllTargets()
 {
+	if (SwitchableTargets.Num() <= 0)
+		return;
+
 	//Invoke Switch on all lever targets
 	for (TScriptInterface<ISwitchable> targetTInterface : SwitchableTargets)
 	{
@@ -73,7 +76,6 @@ void ALever::InvertLeverState()
 		OnLeverOff();
 }
 
-
 #pragma region IInteractable Interface implementation
 
 bool ALever::NativeCanInteract(AActor* contextActor)
@@ -87,9 +89,6 @@ void ALever::NativeInteract(AActor* contextActor)
 	//check if actor exists
 	if (contextActor == nullptr)
 		return;
-
-	if (SwitchableTargets.Num() > 0)
-		SwitchAllTargets();
 	
 	InvertLeverState();
 
