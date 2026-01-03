@@ -13,10 +13,13 @@ class GAUNTLET_2_API UObjectPoolerSubsystem : public UWorldSubsystem
 {
 	GENERATED_BODY()
 
-	private:
+public:
+	UObjectPoolerSubsystem();
+
+private:
 		TMap<TSubclassOf<AActor>, FPoolData> PoolingMap;
 	
-	public:
+public:
 	UFUNCTION(BlueprintCallable)
 	void CreateNewPool(TSubclassOf<AActor> poolActorClass, int32 initialSize);
 

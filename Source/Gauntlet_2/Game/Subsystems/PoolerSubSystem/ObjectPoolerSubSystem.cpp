@@ -1,5 +1,10 @@
 #include "Game/Subsystems/PoolerSubsystem/ObjectPoolerSubsystem.h"
 
+UObjectPoolerSubsystem::UObjectPoolerSubsystem()
+{
+	PoolingMap = TMap<TSubclassOf<AActor>, FPoolData>();
+}
+
 void UObjectPoolerSubsystem::CreateNewPool(TSubclassOf<AActor> poolActorClass, int32 initialSize)
 {
 	//Level is not loaded
@@ -34,13 +39,13 @@ void UObjectPoolerSubsystem::CreateNewPool(TSubclassOf<AActor> poolActorClass, i
 
 			IPoollable* poollable = Cast<IPoollable>(spawnedActor);
 
+			//Add the spawned actor to the PoolData
+			poolData->UsablePoolingObjects.AddUnique(spawnedActor);
+
 			if (poollable)
 				poollable->Disable();
 			else
 				IPoollable::Execute_BP_Disable(spawnedActor);
-
-			//Add the spawned actor to the PoolData
-			poolData->UsablePoolingObjects.AddUnique(spawnedActor);
 		}
 
 		//End
@@ -56,13 +61,13 @@ void UObjectPoolerSubsystem::CreateNewPool(TSubclassOf<AActor> poolActorClass, i
 		AActor* spawnedActor = GetWorld()->SpawnActor<AActor>(poolActorClass, SpawnParameters);
 		IPoollable* poollable = Cast<IPoollable>(spawnedActor);
 
+		//Add the spawned actor to the PoolData
+		newPoolData.UsablePoolingObjects.AddUnique(spawnedActor);
+
 		if (poollable)
 			poollable->Disable();
 		else
 			IPoollable::Execute_BP_Disable(spawnedActor);
-
-		//Add the spawned actor to the PoolData
-		newPoolData.UsablePoolingObjects.AddUnique(spawnedActor);
 	}
 
 	//Add Object To Map
