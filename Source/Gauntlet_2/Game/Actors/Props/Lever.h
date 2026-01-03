@@ -33,6 +33,8 @@ private:
 	void SwitchAllTargets();
 
 #if WITH_EDITOR
+	//Set Dynamic Material And Update color both in scene and in BP editor
+
 	void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent);
 	void OnConstruction(const FTransform& Transform);
 #endif
