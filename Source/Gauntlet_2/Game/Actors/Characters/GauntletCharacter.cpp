@@ -1,6 +1,7 @@
 #include "Game/Actors/Characters/GauntletCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "InputActionValue.h"
 
 // Sets default values
@@ -47,10 +48,30 @@ void AGauntletCharacter::NativeDamage(float amount)
 		return;
 
 	HP -= amount;
+	IDamageable::Execute_BP_OnDamage(this, amount);
 	
 	if (HP <= 0)
 	{
-		//TODO: Die
+		Die();
 	}
 }
 
+void AGauntletCharacter::Die()
+{
+	//Enable Ragdoll
+	GetMesh()->SetSimulatePhysics(true);
+	// schedule respawning
+	GetWorld()->GetTimerManager().SetTimer(RespawnTimer, this, &AGauntletCharacter::Respawn, RespawnTime, false);
+	//Disable Movement
+	GetCharacterMovement()->DisableMovement();
+
+	SetActorEnableCollision(false);
+
+	//Broadcast Death Delegate
+	OnPlayerDead.Broadcast();
+}
+
+void AGauntletCharacter::Respawn()
+{
+	Destroy();
+}
