@@ -84,8 +84,9 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Meta = (AllowPrivateaccess = true, Category = "Turret"))
 	float YawTurningSpeed = 5.f;
 
+	UPROPERTY()
 	TScriptInterface<ITargetable> Target;
-	AActor* TargetActor;
+	TObjectPtr<AActor> TargetActor;
 
 public:	
 	// Sets default values for this actor's properties

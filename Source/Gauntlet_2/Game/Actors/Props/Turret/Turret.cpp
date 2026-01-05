@@ -79,7 +79,7 @@ void ATurret::Tick(float DeltaTime)
 		return;
 	}
 
-	if (GetDistanceToTarget() > TurretDetectingRadious)
+	if (GetDistanceToTarget() > TurretDetectingRadious || !TargetActor->IsActorTickEnabled())
 	{
 		SetTarget(nullptr);
 		return;
@@ -136,6 +136,7 @@ void ATurret::SetTarget(TScriptInterface<ITargetable> target)
 		return;
 	}
 
+	LastShotTime = .0f;
 	Target = target;
 	TargetActor = Cast<AActor>(target.GetObject());
 	OnTargetRecieved(TargetActor);
@@ -155,6 +156,9 @@ float ATurret::GetDistanceToTarget()
 
 void ATurret::ShootAtTarget(float deltaTime)
 {
+	if (TargetActor == nullptr)
+		return;
+
 	FVector targetPosition = TargetActor->GetActorLocation();
 
 	LookAtPosition(deltaTime, targetPosition);
