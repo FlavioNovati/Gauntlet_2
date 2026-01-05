@@ -23,7 +23,6 @@ void AGauntletCharacter::BeginPlay()
 void AGauntletCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -60,12 +59,13 @@ void AGauntletCharacter::Die()
 {
 	//Enable Ragdoll
 	GetMesh()->SetSimulatePhysics(true);
+	GetMesh() -> SetCollisionProfileName(TEXT("Ragdoll"));
 	// schedule respawning
 	GetWorld()->GetTimerManager().SetTimer(RespawnTimer, this, &AGauntletCharacter::Respawn, RespawnTime, false);
 	//Disable Movement
-	GetCharacterMovement()->DisableMovement();
-
-	SetActorEnableCollision(false);
+	GetCharacterMovement()->DisableMovement();	
+	
+	SetActorTickEnabled(false);
 
 	//Broadcast Death Delegate
 	OnPlayerDead.Broadcast();

@@ -9,6 +9,7 @@
 #include "GauntletCharacter.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDead);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPause);
 
 UCLASS()
 class GAUNTLET_2_API AGauntletCharacter : public AGauntlet_2Character, public ITargetable, public IDamageable
@@ -39,12 +40,9 @@ protected:
 	float HP = 100.f;
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
-	float RespawnTime;
+	float RespawnTime = 5.0f;
 
 	FTimerHandle RespawnTimer;
-
-	UPROPERTY(BlueprintAssignable)
-	FOnPlayerDead OnPlayerDead;
 
 	void Respawn();
 	void Die();
@@ -58,4 +56,10 @@ public:
 	
 	// Inherited via IDamageable
 	void NativeDamage(float amount) override;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnPlayerDead OnPlayerDead;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnPause OnPauseRequest;
 };
