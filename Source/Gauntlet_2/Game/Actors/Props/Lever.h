@@ -27,8 +27,6 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Meta = (AllowPrivateaccess = true, Category = "Visual"))
 	FColor OffColor = FColor::Red;
 
-	UFUNCTION(BlueprintCallable, Meta = (AllowPrivateAccess = true))
-	void SwitchAllTargets();
 
 #if WITH_EDITOR
 	//Set Dynamic Material And Update color both in scene and in BP editor
@@ -49,6 +47,9 @@ private:
 
 protected:	
 	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintCallable, Meta = (AllowPrivateAccess = true))
+	void SwitchAllTargets();
 
 	void InvertLeverState();
 
@@ -76,9 +77,9 @@ protected:
 	))
 	TArray<AActor*> LeverTargets;
 
-	TArray< TScriptInterface<ISwitchable>> SwitchableTargets;
+	TArray<TScriptInterface<ISwitchable>> SwitchableTargets;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
