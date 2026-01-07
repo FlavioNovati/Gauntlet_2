@@ -39,6 +39,8 @@ void AProjectile::Disable()
 	SetActorHiddenInGame(true);
 
 	SetActorTickEnabled(false);
+
+	IPoollable::Disable();
 }
 
 void AProjectile::Enable(FPoolEnablingData enablingData)

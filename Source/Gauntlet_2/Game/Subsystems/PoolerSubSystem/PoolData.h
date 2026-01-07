@@ -18,5 +18,6 @@ struct GAUNTLET_2_API FPoolData
 	TArray<TScriptInterface<IPoollable>> EnabledPoolingObjects;
 
 public:
+	void DisableAll();
 	FString ToString();
 };

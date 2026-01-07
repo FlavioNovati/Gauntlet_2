@@ -18,7 +18,7 @@ public:
 
 private:
 		TMap<TSubclassOf<AActor>, FPoolData> PoolingMap;
-	
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void CreateNewPool(TSubclassOf<AActor> poolActorClass, int32 initialSize);
@@ -31,5 +31,4 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	FString ToString();
-
 };

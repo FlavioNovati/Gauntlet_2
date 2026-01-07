@@ -13,3 +13,11 @@ FString FPoolData::ToString()
 
 	return output;
 }
+
+void FPoolData::DisableAll()
+{
+	for(TScriptInterface<IPoollable> pollable : EnabledPoolingObjects)
+		pollable->Disable();
+
+	EnabledPoolingObjects.Empty();
+}

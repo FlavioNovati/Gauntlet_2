@@ -63,15 +63,13 @@ void UObjectPoolerSubsystem::CreateNewPool(TSubclassOf<AActor> poolActorClass, i
 
 		//Add the spawned actor to the PoolData
 		newPoolData.UsablePoolingObjects.AddUnique(spawnedActor);
-
-		if (poollable)
-			poollable->Disable();
-		else
-			IPoollable::Execute_BP_Disable(spawnedActor);
 	}
 
 	//Add Object To Map
 	PoolingMap.Add(poolActorClass, newPoolData);
+
+	//Disable Pooled Objects
+	newPoolData.DisableAll();
 }
 
 TScriptInterface<IPoollable> UObjectPoolerSubsystem::GetObjectFromPool(TSubclassOf<AActor> actorClass)
@@ -144,16 +142,6 @@ bool UObjectPoolerSubsystem::ReturnObjectToPool(TSubclassOf<AActor> actorClass, 
 	{
 		UE_LOG(LogTemp, Error, TEXT("Unable to add oject to pool: CLASS DOES NOT IMPLEMENTS IPOOLLABLE!"));
 		return false;
-	}
-
-	//Disable object to return to pool
-	if (actorToReturn.GetInterface()) //Implemented C++ side
-	{
-		actorToReturn.GetInterface()->Disable();
-	}
-	else //Added via BP
-	{
-		IPoollable::Execute_BP_Disable(actorToReturn.GetObject());
 	}
 
 	// We get the object pool with our pool objects
