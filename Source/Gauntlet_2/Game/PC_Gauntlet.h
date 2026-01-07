@@ -22,8 +22,11 @@ protected:
 
 	virtual void OnPossess(APawn* aPawn) override;
 
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* PauseAction;
+
 	UFUNCTION(BlueprintCallable)
-	void ImplementOnPlayerDead();
+	void ImplementOnPlayerDead(AGauntletCharacter* gauntletPlayer);
 
 	UPROPERTY(EditAnywhere, Category = "Respawn")
 	TSubclassOf<AGauntletCharacter> CharacterClass;
@@ -31,6 +34,27 @@ protected:
 	FTransform RespawnTransform;
 
 	bool bIsInPause = false;
+	bool bIsInMainMenu = true;
+
+	void Pause();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnPause();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnGameplay();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnMainMenu();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnPlay();
+
+	UFUNCTION(BlueprintCallable)
+	void Play();
+
+	UFUNCTION(BlueprintCallable)
+	void ReturnToMainMenu();
 
 public:
 
