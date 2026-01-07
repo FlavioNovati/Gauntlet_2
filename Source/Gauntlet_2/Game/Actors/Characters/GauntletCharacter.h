@@ -6,13 +6,17 @@
 #include "Game/Interfaces/Targetable.h"
 #include "Game/Interfaces/Damageable.h"
 #include "Game/Components/Interaction/InteractionComponent.h"
+#include "Game/Interfaces/PickableTarget.h"
+#include "Components/SceneComponent.h"
 #include "GauntletCharacter.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDead);
+class AGauntletCharacter;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerDead, AGauntletCharacter*, DeadCharacter);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPause);
 
 UCLASS()
-class GAUNTLET_2_API AGauntletCharacter : public AGauntlet_2Character, public ITargetable, public IDamageable
+class GAUNTLET_2_API AGauntletCharacter : public AGauntlet_2Character, public ITargetable, public IDamageable, public IPickableTarget
 {
 	GENERATED_BODY()
 
@@ -30,13 +34,19 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* InteractAction;
 
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(BlueprintReadOnly, meta = (Category = "Gauntlet Character", AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (Category = "Gauntlet Character", AllowPrivateAccess = true))
+	FName PickableTargetSocketName = "";
+	
+	AActor* PickedActor;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (Category = "Gauntlet Character", AllowPrivateAccess = true))
 	bool bCanRecieveDamage = true;
 
-	UPROPERTY(BlueprintReadOnly, meta = (Category = "Gauntlet Character", AllowPrivateAccess = true, EditCondition = "bCanRecieveDamage"))
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (Category = "Gauntlet Character", AllowPrivateAccess = true, EditCondition = "bCanRecieveDamage"))
 	float HP = 100.f;
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
@@ -62,4 +72,14 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnPause OnPauseRequest;
+
+	AActor* GetPickedActor() { return PickedActor; }
+
+	void RemovePickedActor();
+
+	// Inherited via IPickableTarget
+	void PickupPickable(AActor* actorToPlace) override;
+
+	// Inherited via IPickableTarget
+	FTransform GetPickableTargetTransform() override;
 };

@@ -55,6 +55,25 @@ void AGauntletCharacter::NativeDamage(float amount)
 	}
 }
 
+void AGauntletCharacter::RemovePickedActor()
+{
+	if (PickedActor)
+		PickedActor->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+
+	PickedActor = nullptr;
+}
+
+void AGauntletCharacter::PickupPickable(AActor* actorToPlace)
+{
+	PickedActor = actorToPlace;
+	actorToPlace->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, PickableTargetSocketName);
+}
+
+FTransform AGauntletCharacter::GetPickableTargetTransform()
+{
+	return GetMesh()->GetSocketTransform(PickableTargetSocketName);
+}
+
 void AGauntletCharacter::Die()
 {
 	//Enable Ragdoll
@@ -67,8 +86,11 @@ void AGauntletCharacter::Die()
 	
 	SetActorTickEnabled(false);
 
+	if(PickedActor)
+		PickedActor->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+
 	//Broadcast Death Delegate
-	OnPlayerDead.Broadcast();
+	OnPlayerDead.Broadcast(this);
 }
 
 void AGauntletCharacter::Respawn()
