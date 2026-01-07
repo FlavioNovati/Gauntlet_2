@@ -71,7 +71,7 @@ void AArtifactHolder::NativeInteract(AActor* contextActor)
 			ArtefactDynamicMaterial->SetVectorParameterValue("Base Color", FullColor);
 
 
-			//TODO: EXECUTE VICTORY
+			OnArtfactHolded();
 		}
 	}
 }
