@@ -61,4 +61,7 @@ public:
 	UFUNCTION()
 	void RespawnPlayer(AActor* DestroyedActor);
 
+	UFUNCTION(BlueprintCallable)
+	void WinGame();
+
 };

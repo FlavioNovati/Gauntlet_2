@@ -90,3 +90,8 @@ void APC_GauntletController::RespawnPlayer(AActor* DestroyedActor)
 		Possess(RespawnedCharacter);
 	}
 }
+
+void APC_GauntletController::WinGame()
+{
+	ReturnToMainMenu();
+}

@@ -14,7 +14,7 @@ class GAUNTLET_2_API AArtifactHolder : public AActor, public IInteractable, publ
 public:	
 	// Sets default values for this actor's properties
 	AArtifactHolder();
-
+	
 private:
 	AActor* Artifact;
 

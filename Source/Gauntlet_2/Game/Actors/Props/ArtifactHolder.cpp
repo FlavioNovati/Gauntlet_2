@@ -66,19 +66,28 @@ void AArtifactHolder::NativeInteract(AActor* contextActor)
 				return;
 
 			Artifact = artefact;
-			Artifact->AttachToComponent(ArtefactHolder, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-			//Assign Color
-			ArtefactDynamicMaterial->SetVectorParameterValue("Base Color", FullColor);
 
 
-			OnArtfactHolded();
+			artefact->RelasePickable(TScriptInterface<AArtifactHolder>(this));
 		}
 	}
 }
 
 void AArtifactHolder::PickupPickable(AActor* actorToPlace)
 {
+	AArtefact* artefact = Cast<AArtefact>(actorToPlace);
 
+	if (artefact == nullptr)
+		return;
+
+	Artifact = artefact;
+
+	Artifact->AttachToComponent(ArtefactHolder, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	//Assign Color
+	ArtefactDynamicMaterial->SetVectorParameterValue("Base Color", FullColor);
+	artefact->Pickup(TScriptInterface<AArtifactHolder>(this));
+	
+	OnArtfactHolded();
 }
 
 FTransform AArtifactHolder::GetPickableTargetTransform()

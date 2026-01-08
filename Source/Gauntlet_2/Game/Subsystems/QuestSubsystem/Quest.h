@@ -27,6 +27,12 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	UQuest* SubQuest;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	bool bOneTimeQuest = false;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	int QuestIndex = 0;
+
 	bool bIsCompleted;
 
 public:
@@ -34,13 +40,13 @@ public:
 	UQuest(FString questName, FString questDescription, TFunction<void()>* functionToExecute, UQuest* subQuest);
 
 	UFUNCTION(BlueprintCallable)
-	void EnableQuest();
+	void EnableQuest(AActor* contextActor);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnQuestEnabled(AActor* contextActor);
 
 	UFUNCTION(BlueprintCallable)
-	void DisableQuest();
+	void DisableQuest(AActor* contextActor);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnQuestDisabled(AActor* contextActor);
@@ -61,7 +67,12 @@ public:
 	UQuest* GetSubquest() { return SubQuest; }
 	UFUNCTION(BlueprintCallable)
 	bool IsCompleted() { return bIsCompleted; }
+	UFUNCTION(BlueprintCallable)
+	bool IsOneTime() { return bOneTimeQuest; }
+	UFUNCTION(BlueprintCallable)
+	int GetQuestIndex() { return QuestIndex; }
 
 	//Callbacks
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FQuestCallback OnQuestCompletedCallback;
 };

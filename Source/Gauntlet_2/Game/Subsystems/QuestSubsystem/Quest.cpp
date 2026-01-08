@@ -23,26 +23,14 @@ UQuest::UQuest(FString questName, FString questDescription, TFunction<void()>* I
 	SubQuest = InSubQuest;
 }
 
-void UQuest::EnableQuest()
+void UQuest::EnableQuest(AActor* contextActor)
 {
-	if (!GetWorld())
-		return;
-
-	UQuestSubsystem* questSubsystem = GetWorld()->GetSubsystem<UQuestSubsystem>();
-
-	if (questSubsystem)
-		questSubsystem->AddQuest(this);
+	OnQuestEnabled(contextActor);
 }
 
-void UQuest::DisableQuest()
+void UQuest::DisableQuest(AActor* contextActor)
 {
-	if (!GetWorld())
-		return;
-
-	UQuestSubsystem* questSubsystem = GetWorld()->GetSubsystem<UQuestSubsystem>();
-
-	if (questSubsystem)
-		questSubsystem->DisabeQuest(this);
+	OnQuestDisabled(contextActor);
 }
 
 void UQuest::CompleteQuest(AActor* contextActor)
@@ -54,11 +42,6 @@ void UQuest::CompleteQuest(AActor* contextActor)
 	
 	if (FunctionToExecute)
 		(*FunctionToExecute)();
-
-	UQuestSubsystem* questSubsystem = GetWorld()->GetSubsystem<UQuestSubsystem>();
-
-	if (questSubsystem)
-		questSubsystem->CompleteQuest(this, ContextActor);
 
 	OnQuestCompletedCallback.Broadcast(this);
 	OnQuestCompleted(contextActor, GetWorld());

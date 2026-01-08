@@ -60,7 +60,7 @@ void AArtefact::Pickup(TScriptInterface<IPickableTarget> PickableTarget)
 	ArtefactDynamicMaterial->SetVectorParameterValue("Base Color", PickedColor);
 	SetActorEnableCollision(false);
 	LeverBody->SetCollisionProfileName(TEXT("NoCollision"));
-	//TODO: EVENT
+	OnPickup();
 }
 
 void AArtefact::RelasePickable(TScriptInterface<IPickableTarget> PickableTarget)
@@ -71,6 +71,8 @@ void AArtefact::RelasePickable(TScriptInterface<IPickableTarget> PickableTarget)
 	PickableTarget.GetInterface()->PickupPickable(this);
 	ArtefactDynamicMaterial->SetVectorParameterValue("Base Color", RelasedColor);
 	bIsPickedUp = false;
+
+	OnRelased(PickableTarget.GetObject());
 }
 
 void AArtefact::ResetPickable()

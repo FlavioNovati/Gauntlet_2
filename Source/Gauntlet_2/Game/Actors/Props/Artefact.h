@@ -42,6 +42,12 @@ protected:
 	virtual void BeginPlay() override;
 	bool bIsPickedUp = false;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnPickup();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnRelased(UObject* contextObject);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
