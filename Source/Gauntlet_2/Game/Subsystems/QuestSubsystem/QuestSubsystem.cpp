@@ -1,4 +1,8 @@
 #include "Game/Subsystems/QuestSubsystem/QuestSubsystem.h"
+#include "Game/Subsystems/QuestSubsystem/QuestFeedback.h"
+#include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystem.h"
+#include "Engine/AssetManager.h"
 
 void UQuestSubsystem::AddQuest(UQuest* quest)
 {
@@ -25,6 +29,9 @@ void UQuestSubsystem::ProceedQuest(UQuest* quest, AActor* contextActor)
 		ActiveQuests.Remove(quest);
 		ActiveQuests.AddUnique(subquest);
 		OnEnabledQuestChanged.Broadcast(ActiveQuests);
+
+		PlayQuestFeedback(quest, contextActor);
+		LoadQuestFeedback(subquest);
 		return;
 	}
 
@@ -71,6 +78,7 @@ void UQuestSubsystem::EnableQuest(UQuest* quest, AActor* contextActor)
 	ActiveQuests.AddUnique(quest);
 	quest->EnableQuest(contextActor);
 
+	LoadQuestFeedback(quest);
 	OnEnabledQuestChanged.Broadcast(ActiveQuests);
 }
 
@@ -106,7 +114,56 @@ void UQuestSubsystem::CompleteQuest(UQuest* quest, AActor* contextActor)
 	CompletedQuests.AddUnique(quest);
 
 	quest->CompleteQuest(contextActor);
+	PlayQuestFeedback(quest, contextActor);
 
 	OnEnabledQuestChanged.Broadcast(ActiveQuests);
 	OnCompletedQuestChanged.Broadcast(CompletedQuests);
+}
+
+void UQuestSubsystem::LoadQuestFeedback(UQuest* quest)
+{
+	if (quest == nullptr)
+		return;
+
+	TObjectPtr<UQuestFeedback> feedback = quest->GetQuestFeedback();
+
+	if (feedback == nullptr)
+		return;
+
+	TSoftObjectPtr<USoundBase> soundPtr = feedback->GetSoundPtr();
+	TSoftObjectPtr<UParticleSystem> particlePtr = feedback->GetParticleSystemPtr();
+
+	//Load Assets
+	UAssetManager::GetStreamableManager().RequestAsyncLoad( soundPtr.ToSoftObjectPath() );
+	UAssetManager::GetStreamableManager().RequestAsyncLoad( particlePtr.ToSoftObjectPath() );
+}
+
+void UQuestSubsystem::PlayQuestFeedback(UQuest* quest, AActor* contextActor)
+{
+	if (quest == nullptr)
+		return;
+
+	TObjectPtr<UQuestFeedback> feedback = quest->GetQuestFeedback();
+
+	if (feedback == nullptr)
+		return;
+
+	TSoftObjectPtr<USoundBase> soundPtr = feedback->GetSoundPtr();
+	TSoftObjectPtr<UParticleSystem> particlePtr = feedback->GetParticleSystemPtr();
+
+	if (soundPtr != nullptr)
+	{
+		if (USoundBase* loadedSound = soundPtr.Get())
+		{
+			UGameplayStatics::PlaySound2D(GetWorld(), loadedSound);
+		}
+	}
+
+	if (particlePtr != nullptr)
+	{
+		if (UParticleSystem* particleSys = particlePtr.Get())
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), particleSys, contextActor->GetTransform(), true, EPSCPoolMethod::AutoRelease, true);
+		}
+	}
 }

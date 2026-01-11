@@ -38,6 +38,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CompleteQuest(UQuest* quest, AActor* contextActor);
 
+	void LoadQuestFeedback(UQuest* quest);
+	void PlayQuestFeedback(UQuest* quest, AActor* contextActor);
+
 	UFUNCTION(BlueprintCallable)
 	const TArray<UQuest*> GetActiveQuests() { return ActiveQuests; }
 

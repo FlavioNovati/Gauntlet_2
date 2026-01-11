@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Game/Subsystems/QuestSubsystem/QuestFeedback.h"
 #include "Quest.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FQuestCallback, UQuest*, Quest);
@@ -32,6 +33,9 @@ private:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
 	int QuestIndex = 0;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess = true))
+	UQuestFeedback* QuestFeedback;
 
 	bool bIsCompleted;
 
@@ -75,4 +79,6 @@ public:
 	//Callbacks
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FQuestCallback OnQuestCompletedCallback;
+
+	TObjectPtr<UQuestFeedback> GetQuestFeedback() { return QuestFeedback; }
 };
